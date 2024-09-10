@@ -1,0 +1,12 @@
+kind: kapeta/block-type-service:1.3.7
+metadata:
+  name: kapeta/html-block-service
+  visibility: private
+  title: html block service
+  description: block service description
+spec:
+  entities: {}
+  providers: []
+  consumers: []
+  target:
+    kind: kapeta/language-target-html:local

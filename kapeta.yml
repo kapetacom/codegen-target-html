@@ -1,0 +1,23 @@
+kind: core/language-target
+metadata:
+  name: kapeta/language-target-html
+  title: HTML5
+  description: Node.js image with Express to serve static html
+  visibility: public
+spec:
+  icon:
+    type: url
+    value: https://storage.googleapis.com/kapeta-public-cdn/icons/html5.svg
+  local:
+    image: node:20
+    workingDir: /workspace
+    healthcheck: 'wget --no-verbose --tries=1 --spider "http://localhost:80/.kapeta/health" || exit 1'
+    handlers:
+      onCreate: sh /workspace/scripts/start-dev.sh
+    Env:
+      - NPM_CONFIG_PROGRESS=false
+      - NPM_CONFIG_LOGLEVEL=verbose
+      - NPM_CONFIG_foreground_scripts=true
+    HostConfig:
+      Binds:
+        - ~/.npm:~/.npm
