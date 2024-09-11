@@ -54,7 +54,7 @@ export default class HtmlTarget extends Target {
                 const content = fs.readFileSync(staticFile);
 
                 result.push({
-                    filename: 'public/' + path.relative(targetOptions.AIStaticFiles!, staticFile),
+                    filename: 'static/' + path.relative(targetOptions.AIStaticFiles!, staticFile),
                     content: content,
                     mode: stats.mode.toString(8),
                     permissions: (stats.mode & 0o777).toString(8)

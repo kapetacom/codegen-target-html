@@ -17,7 +17,7 @@ describe('blocks', () => {
         const target = new Target(blockCodeGenerator.getTargetOptions());
         const results = await blockCodeGenerator.generateForTarget(target as any);
 
-        expect(results.files.find((generatedFile) => generatedFile.filename === 'public/index.html')).toBeDefined();
-        expect(results.files.find((generatedFile) => generatedFile.filename === 'public/styles/style.css')).toBeDefined();
+        expect(results.files.find((generatedFile) => generatedFile.filename === 'static/index.html')).toBeDefined();
+        expect(results.files.find((generatedFile) => generatedFile.filename === 'static/styles/style.css')).toBeDefined();
     });
 });

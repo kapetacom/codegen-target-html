@@ -1,0 +1,105 @@
+//#FILENAME:src/.generated/standard-routes.ts:write-always
+import express, {NextFunction, Request, Response, Router} from 'express';
+import * as FS from "node:fs";
+import path from "node:path";
+import Path from "path";
+
+export function standardRoutes(routes: Router) {
+    routes.use(express.static(path.join(process.cwd(), 'static/public')));
+    routes.all('/*', (req: Request, res: Response, next: NextFunction) => {
+        const found = readPageFromDisk(req.params[0], req.method, res);
+        if (!found) {
+            next();
+        }
+    });
+}
+
+function normalizePath(path: string) {
+    return path
+        .replace(/#.*$/g, '') // Remove hash
+        .replace(/\?.*$/gi, '') // Remove query params
+        .replace(/:[a-z][a-z_]*\b/gi, '*') // Replace all params with *
+        .replace(/\{[a-z-.]+}/gi, '*'); // Replace all variables with *
+}
+
+function getFilePath(method: string) {
+    // For HEAD requests, we assume we're serving looking for a GET resource
+    return Path.join(method === 'HEAD' ? 'get' : method.toLowerCase(), 'index.html');
+}
+
+export function getSystemBaseDir() {
+    return Path.join(process.cwd(), 'static');
+}
+
+function resolveReadPath(path: string, method: string) {
+    const baseDir = getSystemBaseDir();
+
+    path = normalizePath(path);
+
+    let fullPath = Path.join(baseDir, path);
+
+    //First check if there is a file at the exact path
+    try {
+        const stat = FS.statSync(fullPath);
+        if (stat && stat.isFile()) {
+            return fullPath;
+        }
+    } catch (e) {
+        // Ignore
+    }
+
+    const filePath = getFilePath(method);
+    fullPath = Path.join(baseDir, path, filePath);
+
+    if (FS.existsSync(fullPath)) {
+        return fullPath;
+    }
+
+    const parts = path.split('/');
+
+    let currentPath = '';
+
+    for (let part of parts) {
+        const thisPath = Path.join(currentPath, part);
+        const starPath = Path.join(currentPath, '*');
+        const thisPathDir = Path.join(baseDir, thisPath);
+        const starPathDir = Path.join(baseDir, starPath);
+
+        if (FS.existsSync(thisPathDir)) {
+            currentPath = thisPath;
+            continue;
+        }
+
+        if (FS.existsSync(starPathDir)) {
+            currentPath = starPath;
+            continue;
+        }
+
+        // Path not found
+        return null;
+    }
+
+    return Path.join(baseDir, currentPath, filePath);
+}
+
+function readPageFromDisk(path: string, method: string, res: Response): boolean {
+    const filePath = resolveReadPath(path, method);
+    if (!filePath || !FS.existsSync(filePath)) {
+        return false;
+    }
+
+    res.type(filePath.split('.').pop() as string);
+
+    const content = FS.readFileSync(filePath);
+
+    if (method === 'HEAD') {
+        // For HEAD requests, just end the response after setting headers
+        res.status(200).end();
+    } else {
+        // For GET requests, return the full content
+        res.write(content);
+        res.end();
+    }
+
+    return true;
+}
