@@ -12,7 +12,7 @@ ADD tsconfig.json /application/tsconfig.json
 ADD kapeta.yml /application/kapeta.yml
 ADD index.ts /application/index.ts
 ADD src /application/src
-ADD public /application/public
+ADD static /application/static
 
 FROM node:20-alpine3.18
 COPY --from=build /application /application
