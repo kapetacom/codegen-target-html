@@ -1,0 +1,36 @@
+//#FILENAME:tsconfig.json:create-only
+{
+    "compilerOptions": {
+        "target": "ES2021",
+        "lib": ["es6", "es7", "ES2021"],
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "strict": true,
+        "module": "Node16",
+        "resolveJsonModule": true,
+        "experimentalDecorators": true,
+        "allowJs": true,
+        "jsx": "react",
+        "moduleResolution": "Node16",
+        "forceConsistentCasingInFileNames": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "noUnusedLocals": false,
+        "allowSyntheticDefaultImports": true,
+        "emitDecoratorMetadata": true,
+        "isolatedModules": true,
+        "baseUrl": ".",
+        "paths": {
+            "generated:*": [
+                "src/.generated/*"
+            ]
+        }
+    },
+    "ts-node": {
+        "require": ["tsconfig-paths/register"]
+    },
+    "include": ["src/**/*.ts", "src/**/*.tsx", "index.ts"],
+    "exclude": ["node_modules", "dist"]
+}
